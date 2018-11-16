@@ -1,28 +1,61 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import { Container, Header, Grid, Form } from 'semantic-ui-react'
+import './App.css'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+const Todo = ({ todo }) => <div className="todo">{todo.text}</div>
+
+function Todoform({ addTodo }) {
+  const [value, setValue] = useState('')
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    if (!value) return
+    addTodo(value)
+    setValue('')
   }
+
+  return (
+    <Container>
+      <Form onSubmit={handleSubmit}>
+        <Form.Field>
+          <label>new todo</label>
+          <input
+            placeholder="todo"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+          />
+        </Form.Field>
+      </Form>
+    </Container>
+  )
 }
 
-export default App;
+function App() {
+  const [todos, setTodos] = useState([
+    { text: "we're really doing it" },
+    { text: 'yes i love hooks' },
+    { text: 'Arnold Rothstein' }
+  ])
+
+  const addTodo = text => {
+    const newTodos = [...todos, { text }]
+    setTodos(newTodos)
+  }
+
+  const list = todos.map((todo, i) => (
+    <Grid.Row key={i}>
+      <Todo key={i} index={i} todo={todo} />
+    </Grid.Row>
+  ))
+  return (
+    <Container textAlign="center">
+      <Header as="h1" style={{ marginTop: '2em' }}>
+        Todo list biotch
+      </Header>
+      <Grid textAlign="center">{list}</Grid>
+      <Todoform addTodo={addTodo} />
+    </Container>
+  )
+}
+
+export default App
