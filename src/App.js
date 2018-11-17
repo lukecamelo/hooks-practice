@@ -1,17 +1,27 @@
 import React, { useState } from 'react'
-import { Container, Header, Grid, Form } from 'semantic-ui-react'
+import { Container, Header, Form, Button, List } from 'semantic-ui-react'
 import './App.css'
 
-const Todo = ({ todo }) => <div className="todo">{todo.text}</div>
+const Todo = ({ todo, index, completeTodo, removeTodo }) => (
+  <Container style={{ textDecoration: todo.isCompleted ? 'line-through' : '' }}>
+    <p>{todo.text}</p>
+    <Button onClick={() => completeTodo(index)} positive>
+      Complete
+    </Button>
+    <Button onClick={() => removeTodo(index)} negative>
+      Delete
+    </Button>
+  </Container>
+)
 
 function Todoform({ addTodo }) {
-  const [value, setValue] = useState('')
+  const todo = useFormInput('')
 
   const handleSubmit = e => {
     e.preventDefault()
-    if (!value) return
-    addTodo(value)
-    setValue('')
+    if (!todo) return
+    addTodo(todo.value)
+    todo.value = ''
   }
 
   return (
@@ -19,11 +29,7 @@ function Todoform({ addTodo }) {
       <Form onSubmit={handleSubmit}>
         <Form.Field>
           <label>new todo</label>
-          <input
-            placeholder="todo"
-            value={value}
-            onChange={e => setValue(e.target.value)}
-          />
+          <input id="input" {...todo} />
         </Form.Field>
       </Form>
     </Container>
@@ -32,9 +38,9 @@ function Todoform({ addTodo }) {
 
 function App() {
   const [todos, setTodos] = useState([
-    { text: "we're really doing it" },
-    { text: 'yes i love hooks' },
-    { text: 'Arnold Rothstein' }
+    { text: "we're really doing it", isCompleted: false },
+    { text: 'yes i love hooks', isCompleted: false },
+    { text: 'Arnold Rothstein', isCompleted: false }
   ])
 
   const addTodo = text => {
@@ -42,20 +48,48 @@ function App() {
     setTodos(newTodos)
   }
 
+  const completeTodo = index => {
+    const newTodos = [...todos]
+    newTodos[index].isCompleted = true
+    setTodos(newTodos)
+  }
+
+  const removeTodo = index => {
+    const newTodos = [...todos]
+    newTodos.splice(index, 1)
+    setTodos(newTodos)
+  }
+
   const list = todos.map((todo, i) => (
-    <Grid.Row key={i}>
-      <Todo key={i} index={i} todo={todo} />
-    </Grid.Row>
+    <List.Item key={i}>
+      <Todo
+        key={i}
+        index={i}
+        todo={todo}
+        completeTodo={completeTodo}
+        removeTodo={removeTodo}
+      />
+    </List.Item>
   ))
   return (
     <Container textAlign="center">
       <Header as="h1" style={{ marginTop: '2em' }}>
         Todo list biotch
       </Header>
-      <Grid textAlign="center">{list}</Grid>
+      <List>{list}</List>
       <Todoform addTodo={addTodo} />
     </Container>
   )
 }
 
+function useFormInput(initialValue) {
+  const [value, setValue] = useState(initialValue)
+  function handleChange(e) {
+    setValue(e.target.value)
+  }
+  return {
+    value,
+    onChange: handleChange
+  }
+}
 export default App
