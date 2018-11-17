@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Container, Header, Form, Button, List } from 'semantic-ui-react'
 import './App.css'
 
@@ -43,6 +43,8 @@ function App() {
     { text: 'Arnold Rothstein', isCompleted: false }
   ])
 
+  const width = useWindowWidth()
+
   const addTodo = text => {
     const newTodos = [...todos, { text }]
     setTodos(newTodos)
@@ -74,7 +76,7 @@ function App() {
   return (
     <Container textAlign="center">
       <Header as="h1" style={{ marginTop: '2em' }}>
-        Todo list biotch
+        Todo list biotch - window size: {width}
       </Header>
       <List>{list}</List>
       <Todoform addTodo={addTodo} />
@@ -91,5 +93,17 @@ function useFormInput(initialValue) {
     value,
     onChange: handleChange
   }
+}
+
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth)
+  let resizeWindow = () => setWidth(window.innerWidth)
+  useEffect(() => {
+    window.addEventListener('resize', resizeWindow)
+    return () => {
+      window.removeEventListener('resize', resizeWindow)
+    }
+  })
+  return width
 }
 export default App
