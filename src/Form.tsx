@@ -12,8 +12,8 @@ interface IState {
 }
 const useFormInput = (initialValue: string) => {
   const [value, setValue] = useState(initialValue)
-  function handleChange(e: any) {
-    setValue(e.target.value)
+  function handleChange(e: React.FormEvent<HTMLInputElement>) {
+    setValue(e.currentTarget.value)
   }
   return {
     value,
@@ -21,21 +21,18 @@ const useFormInput = (initialValue: string) => {
   }
 }
 
-interface Item {
-  item: string
-}
-
 const Form: SFC<IProps> = ({ text, age }) => {
   const input = useFormInput('')
   const [list, setList] = useState([])
+
   function handleSubmit(e: any) {
     e.preventDefault()
     if (!input) return
-    addList(input.value)
+    addListItem(input.value)
     input.value = ''
   }
 
-  const addList = (item: any) => {
+  const addListItem = (item: any) => {
     const newList: any = [...list, item]
     setList(newList)
   }
