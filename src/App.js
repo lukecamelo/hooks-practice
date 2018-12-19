@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Container, Header, Form, Button, List } from 'semantic-ui-react'
+import Testy from './Testy'
 import './App.css'
 
 const Todo = ({ todo, index, completeTodo, removeTodo }) => (
